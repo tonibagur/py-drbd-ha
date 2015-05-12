@@ -40,6 +40,151 @@ class TestDrbdParser(unittest.TestCase):
         self.assertEqual(p.ds1,'UpToDate')
         self.assertEqual(p.ds2,'DUnknown')
 
+class TestHASlaveStrategy(unittest.TestCase):
+    def test_both_ok_docker_down(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Primary'
+                self.dr2='Secondary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ko'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'demote_drbd')
+    def test_both_ok_docker_up(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Primary'
+                self.dr2='Secondary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ok'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'docker_down')
+    def test_slave_ok_docker_down(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='WFConnection'
+                self.dr1='Primary'
+                self.dr2='Unknown'
+                self.ds1='UpToDate'
+                self.ds2='DUnknown'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ko'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'docker_up')
+    def test_slave_ok_docker_ok(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='WFConnection'
+                self.dr1='Primary'
+                self.dr2='Unknown'
+                self.ds1='UpToDate'
+                self.ds2='DUnknown'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ok'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'wait')
+
+    def test_slave_secondary_disconnected_docker_down(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='WFConnection'
+                self.dr1='Secondary'
+                self.dr2='Unknown'
+                self.ds1='UpToDate'
+                self.ds2='DUnknown'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ko'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'promote_drbd')
+
+    def test_slave_secondary_disconnected_docker_up(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='WFConnection'
+                self.dr1='Secondary'
+                self.dr2='Unknown'
+                self.ds1='UpToDate'
+                self.ds2='DUnknown'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ok'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'docker_down')
+    def test_slave_secondary_connected_secondary_docker_down(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Secondary'
+                self.dr2='Secondary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ko'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'wait')
+
+    def test_slave_secondary_connected_secondary_docker_up(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Secondary'
+                self.dr2='Secondary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ok'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'docker_down')
+    def test_slave_secondary_connected_primary_docker_up(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Secondary'
+                self.dr2='Secondary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ok'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'docker_down')
+    def test_slave_secondary_connected_primary_docker_down(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Secondary'
+                self.dr2='Primary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ko'
+        import ha_strategy
+        s=ha_strategy.HASlaveStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'wait')
+
 class TestHAMasterStrategy(unittest.TestCase):
     def test_both_ok_docker_down(self):
         class ParserStub(object):
@@ -98,6 +243,92 @@ class TestHAMasterStrategy(unittest.TestCase):
         s=ha_strategy.HAMasterStrategy(ParserStub(),DockerStatusStub())
         self.assertEqual(s.next_action(),'wait')
 
+    def test_master_secondary_disconnected_docker_down(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='WFConnection'
+                self.dr1='Secondary'
+                self.dr2='Unknown'
+                self.ds1='UpToDate'
+                self.ds2='DUnknown'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ko'
+        import ha_strategy
+        s=ha_strategy.HAMasterStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'promote_drbd')
+
+    def test_master_secondary_disconnected_docker_up(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='WFConnection'
+                self.dr1='Secondary'
+                self.dr2='Unknown'
+                self.ds1='UpToDate'
+                self.ds2='DUnknown'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ok'
+        import ha_strategy
+        s=ha_strategy.HAMasterStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'docker_down')
+    def test_master_secondary_connected_secondary_docker_down(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Secondary'
+                self.dr2='Secondary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ko'
+        import ha_strategy
+        s=ha_strategy.HAMasterStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'promote_drbd')
+
+    def test_master_secondary_connected_secondary_docker_up(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Secondary'
+                self.dr2='Secondary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ok'
+        import ha_strategy
+        s=ha_strategy.HAMasterStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'docker_down')
+    def test_master_secondary_connected_primary_docker_up(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Secondary'
+                self.dr2='Secondary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ok'
+        import ha_strategy
+        s=ha_strategy.HAMasterStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'docker_down')
+    def test_master_secondary_connected_primary_docker_down(self):
+        class ParserStub(object):
+            def parse(self):
+                self.cs='Connected'
+                self.dr1='Secondary'
+                self.dr2='Primary'
+                self.ds1='UpToDate'
+                self.ds2='UpToDate'
+        class DockerStatusStub(object):
+            def get_status(self):
+                return 'ko'
+        import ha_strategy
+        s=ha_strategy.HAMasterStrategy(ParserStub(),DockerStatusStub())
+        self.assertEqual(s.next_action(),'wait')
 #todo, implementar accions en funcio de strategy
 #quan hi hagi accio desconeguda agent ha de fallar i enviar email
 
