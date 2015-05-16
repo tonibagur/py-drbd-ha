@@ -1,4 +1,5 @@
 *.swp
+pending_stubs.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
