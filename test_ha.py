@@ -329,7 +329,84 @@ class TestHAMasterStrategy(unittest.TestCase):
         import ha_strategy
         s=ha_strategy.HAMasterStrategy(ParserStub(),DockerStatusStub())
         self.assertEqual(s.next_action(),'wait')
-#todo, implementar accions en funcio de strategy
+
+class TestAgent(unittest.TestCase):
+    def test1(self):
+        import ha_agent
+        class StubStrategy(object):
+            next='a'
+            def next_action(self):
+                actual=self.next
+                if len(self.next)<4:
+                    self.next=actual +'a'
+                else:
+                    return 'unknown_action'   
+                return actual
+        class StubAgent(ha_agent.Agent):
+            actions=[]
+            def action_a(self):
+                self.actions.append('a')
+            def action_aa(self):
+                self.actions.append('aa')
+            def action_aaa(self):
+                self.actions.append('aaa')
+            def action_wait(self):
+                self.actions.append('w')
+        a=StubAgent(StubStrategy())
+        a.run()
+        self.assertEqual(a.actions,['a','w','aa','w','aaa'])
+    def test_kwargs(self):
+        import ha_agent
+        s='stategy'
+        o1='object1'
+        o2='object2'
+        o3='object3'
+        a=ha_agent.Agent(s,o1=o1,o2=o2,o3=o3)
+        self.assertEqual(a.strategy,s)
+        self.assertEqual(a.o1,o1)
+        self.assertEqual(a.o2,o2)
+        self.assertEqual(a.o3,o3)
+
+
+class TestHAAgent(unittest.TestCase):
+    class DockerRunnerStub(object):
+        up=False
+        down=False
+        def docker_up(self):
+            self.up=True
+        def docker_down(self):
+            self.down=True
+    class DrbdManagerStub(object):
+        demoted=False
+        promoted=False
+        def demote_drbd(self):
+            self.demoted=True
+        def promote_drbd(self):
+            self.promoted=True
+    def test_docker(self):
+        import ha_agent
+        s='strategy'
+        r=self.DockerRunnerStub()
+        ha=ha_agent.HAAgent(s,docker_runner=r)
+        self.assertEqual(r.up,False)
+        ha.action_docker_up()
+        self.assertEqual(r.up,True)
+        self.assertEqual(r.down,False)
+        ha.action_docker_down()
+        self.assertEqual(r.down,True)
+    def test_drbd(self):
+        import ha_agent
+        s='strategy'
+        r=self.DrbdManagerStub()
+        ha=ha_agent.HAAgent(s,drbd_manager=r)
+        self.assertEqual(r.promoted,False)
+        ha.action_promote_drbd()
+        self.assertEqual(r.promoted,True)
+        self.assertEqual(r.demoted,False)
+        ha.action_demote_drbd()
+        self.assertEqual(r.demoted,True)
+
+#implementar casuistica dependencies de serveis            
 #quan hi hagi accio desconeguda agent ha de fallar i enviar email
 
 if __name__=='__main__':
