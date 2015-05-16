@@ -7,6 +7,7 @@ from stub import Stub
 class TestDrbdParser(unittest.TestCase):
     def test_parse1(self):
         class ConnectorStub(Stub):
+            implemented_by='drbd_status.DrbdStatus'
             def getDrbdLines(self):
                 return ['version: 8.4.3 (api:1/proto:86-101)\n', 'srcversion: F97798065516C94BE0F27DC \n', '\n', ' 1: cs:Connected ro:Primary/Secondary ds:UpToDate/UpToDate C r-----\n', '    ns:5206108 nr:0 dw:5206108 dr:48757241 al:645 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:d oos:0\n']
         p=parser_drbd.DrbdParser(1,ConnectorStub())
@@ -18,6 +19,7 @@ class TestDrbdParser(unittest.TestCase):
         self.assertEqual(p.ds2,'UpToDate')
     def test_parse2(self):
         class ConnectorStub(Stub):
+            implemented_by='drbd_status.DrbdStatus'
             def getDrbdLines(self):
                 return ['version: 8.4.3 (api:1/proto:86-101)\n', 'srcversion: F97798065516C94BE0F27DC \n', '\n', ' 1: cs:Connected ro:Secondary/Secondary ds:UpToDate/UpToDate C r-----\n', '    ns:5206108 nr:0 dw:5206108 dr:48757241 al:645 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:d oos:0\n']
         p=parser_drbd.DrbdParser(1,ConnectorStub())
@@ -31,6 +33,7 @@ class TestDrbdParser(unittest.TestCase):
 
     def test_parse3(self):
         class ConnectorStub(Stub):
+            implemented_by='drbd_status.DrbdStatus'
             def getDrbdLines(self):
                 return ['version: 8.4.3 (api:1/proto:86-101)\n', 'srcversion: F97798065516C94BE0F27DC \n', '\n', '1: cs:WFConnection ro:Primary/Unknown ds:UpToDate/DUnknown C r-----\n', 'ns:5433228 nr:0 dw:5434240 dr:48876665 al:678 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:d oos:884\n']
         p=parser_drbd.DrbdParser(1,ConnectorStub())
@@ -52,6 +55,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -67,6 +71,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -82,6 +87,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='DUnknown'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -97,6 +103,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='DUnknown'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -113,6 +120,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='DUnknown'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -129,6 +137,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='DUnknown'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -144,6 +153,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -160,6 +170,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -175,6 +186,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -190,6 +202,7 @@ class TestHASlaveStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -207,6 +220,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -222,6 +236,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -237,6 +252,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='DUnknown'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -252,6 +268,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='DUnknown'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -268,6 +285,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='DUnknown'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -284,6 +302,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='DUnknown'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -299,6 +318,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -315,6 +335,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -330,6 +351,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ok'
         import ha_strategy
@@ -345,6 +367,7 @@ class TestHAMasterStrategy(unittest.TestCase):
                 self.ds1='UpToDate'
                 self.ds2='UpToDate'
         class DockerStatusStub(Stub):
+            implemented_by='docker_status.DockerStatus'
             def get_status(self):
                 return 'ko'
         import ha_strategy
@@ -355,6 +378,7 @@ class TestAgent(unittest.TestCase):
     def test1(self):
         import ha_agent
         class StubStrategy(Stub):
+            implemented_by='ha_strategy'
             next='a'
             def next_action(self):
                 actual=self.next
@@ -391,6 +415,7 @@ class TestAgent(unittest.TestCase):
 
 class TestHAAgent(unittest.TestCase):
     class DockerRunnerStub(Stub):
+        implemented_by='docker_runner.DockerRunner'
         up=False
         down=False
         def docker_up(self):
@@ -398,6 +423,7 @@ class TestHAAgent(unittest.TestCase):
         def docker_down(self):
             self.down=True
     class DrbdManagerStub(Stub):
+        implemented_by='drbd_manager.DrbdManager'
         demoted=False
         promoted=False
         def demote_drbd(self):
