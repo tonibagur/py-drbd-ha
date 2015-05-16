@@ -7,7 +7,7 @@ from stub import Stub
 class TestDrbdParser(unittest.TestCase):
     def test_parse1(self):
         class ConnectorStub(Stub):
-            implemented_by='drbd_status.DrbdStatus'
+            implemented_by='parser_drbd.DrbdConnector'
             def getDrbdLines(self):
                 return ['version: 8.4.3 (api:1/proto:86-101)\n', 'srcversion: F97798065516C94BE0F27DC \n', '\n', ' 1: cs:Connected ro:Primary/Secondary ds:UpToDate/UpToDate C r-----\n', '    ns:5206108 nr:0 dw:5206108 dr:48757241 al:645 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:d oos:0\n']
         p=parser_drbd.DrbdParser(1,ConnectorStub())
@@ -19,7 +19,7 @@ class TestDrbdParser(unittest.TestCase):
         self.assertEqual(p.ds2,'UpToDate')
     def test_parse2(self):
         class ConnectorStub(Stub):
-            implemented_by='drbd_status.DrbdStatus'
+            implemented_by='parser_drbd.DrbdConnector'
             def getDrbdLines(self):
                 return ['version: 8.4.3 (api:1/proto:86-101)\n', 'srcversion: F97798065516C94BE0F27DC \n', '\n', ' 1: cs:Connected ro:Secondary/Secondary ds:UpToDate/UpToDate C r-----\n', '    ns:5206108 nr:0 dw:5206108 dr:48757241 al:645 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:d oos:0\n']
         p=parser_drbd.DrbdParser(1,ConnectorStub())
@@ -33,7 +33,7 @@ class TestDrbdParser(unittest.TestCase):
 
     def test_parse3(self):
         class ConnectorStub(Stub):
-            implemented_by='drbd_status.DrbdStatus'
+            implemented_by='parser_drbd.DrbdConnector'
             def getDrbdLines(self):
                 return ['version: 8.4.3 (api:1/proto:86-101)\n', 'srcversion: F97798065516C94BE0F27DC \n', '\n', '1: cs:WFConnection ro:Primary/Unknown ds:UpToDate/DUnknown C r-----\n', 'ns:5433228 nr:0 dw:5434240 dr:48876665 al:678 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:d oos:884\n']
         p=parser_drbd.DrbdParser(1,ConnectorStub())

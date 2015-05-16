@@ -1,4 +1,4 @@
-
+import time
 
 class Agent(object):
     last_action=''
@@ -8,6 +8,7 @@ class Agent(object):
             setattr(self,k,kwargs[k])
     def run(self):
         self.last_action=self.strategy.next_action()
+        print "last_action",self.last_action
         while (self.last_action!='unknown_action'):
             method=getattr(self,'action_'+self.last_action)
             method()
@@ -16,6 +17,7 @@ class Agent(object):
                 self.action_wait()
 
 class HAAgent(Agent):
+     wait_time=5
      def action_docker_up(self):
          self.docker_runner.docker_up()
      def action_docker_down(self):
@@ -24,4 +26,6 @@ class HAAgent(Agent):
          self.drbd_manager.promote_drbd()
      def action_demote_drbd(self):
          self.drbd_manager.demote_drbd()
+     def action_wait(self):
+         time.sleep(self.wait_time)
 	

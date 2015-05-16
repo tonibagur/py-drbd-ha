@@ -19,5 +19,5 @@ class DrbdManager(object):
 
 if __name__=='__main__':
     pass
-    #DrbdManager('vdocker03','/volumes2','/dev/drbd2').demote_drbd()
+    DrbdManager('vdocker03','/volumes2','/dev/drbd2').demote_drbd()
     #DrbdManager('vdocker03','/volumes2','/dev/drbd2').promote_drbd()
