@@ -8,8 +8,8 @@ class Agent(object):
             setattr(self,k,kwargs[k])
     def run(self):
         self.last_action=self.strategy.next_action()
-        print "last_action",self.last_action
         while (self.last_action!='unknown_action'):
+            print "last_action",self.last_action
             method=getattr(self,'action_'+self.last_action)
             method()
             self.last_action=self.strategy.next_action()

@@ -17,9 +17,11 @@ class HAMasterStrategy(object):
                return 'wait'
         return 'unknown_action'
     def start_docker_if_down(self):
-        if self.docker_status.get_status()=='ok':
+        status=self.docker_status.get_status()
+        print "start_docker_if_down,status:",status
+        if status=='ok':
            return 'wait'
-        elif self.docker_status.get_status()=='ko':
+        elif status=='ko':
            return 'docker_up'
 
 class HASlaveStrategy(object):

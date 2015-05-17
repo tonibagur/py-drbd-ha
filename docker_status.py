@@ -5,6 +5,7 @@ class DockerStatus(object):
         self.supervisor_file=supervisor_file
     def get_status(self):
         lines=os.popen('supervisorctl -c {0} status'.format(self.supervisor_file)).readlines()
+        print lines
         status='ok'
         if lines[0].find('refused connection')!=-1:
             status='ko'
