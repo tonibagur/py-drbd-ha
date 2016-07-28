@@ -1,5 +1,6 @@
 from  ha_factory import HAFactory
 import sys
+import time
 
 def main():
     if len(sys.argv)>1 and sys.argv[1]=='master': 
@@ -14,4 +15,5 @@ def main():
         print "Use: python ha_runner.py master|slave"
 
 if __name__=='__main__':
+    time.sleep(120)
     main()

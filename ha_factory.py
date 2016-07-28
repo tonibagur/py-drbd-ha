@@ -9,8 +9,8 @@ class HAFactory(object):
     def __init__(self):
         self.config={
             'num':2,
-            'supervisor_file_master':'/home/coneptum/railkivy_phonegap/supervisor/postgres_prepro_master.conf',
-            'supervisor_file_slave':'/home/coneptum/railkivy_phonegap/supervisor/postgres_prepro_slave.conf',
+            'supervisor_file_master':'/home/coneptum/railkivy_phonegap/supervisor/virt02g01_master.conf',
+            'supervisor_file_slave':'/home/coneptum/railkivy_phonegap/supervisor/virt02g01_slave.conf',
             'resource_name':'vdocker03',
             'mount_point':'/volumes2',
             'drbd_device':'/dev/drbd2',
